@@ -75,7 +75,7 @@ class CurrencyRepository(CrudRepository[Currency, int]):
                     cursor.execute(query, (currency.code, currency.fullname, currency.sign, id))
                     connection.commit()
         except Exception as e:
-            if connection:
+            if connection: 
                 connection.rollback()
             raise RuntimeError(f"Ошибка при обновлении валюты: {e}")
 

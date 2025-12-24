@@ -2,8 +2,7 @@ import redis
 from typing import Optional
 
 
-class RedisClient:
-   
+class RedisClient:    
     _instance: Optional['RedisClient'] = None
     _redis_client: Optional[redis.Redis] = None
     

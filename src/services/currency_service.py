@@ -47,7 +47,9 @@ class CurrencyServiceImpl(CurrencyService):
         cached_value = self._get_from_cache(cache_key)
         if cached_value:
             return cached_value
-                currency = self.currency_repository.find_by_id(id)
+        
+        currency = self.currency_repository.find_by_id(id)
+        
         if currency:
             self._set_to_cache(cache_key, currency)
         return currency
@@ -92,6 +94,8 @@ class CurrencyServiceImpl(CurrencyService):
         currency_to_be_updated.code = currency.code
         currency_to_be_updated.sign = currency.sign
         self.currency_repository.update(currency_to_be_updated, id)
+        self._clear_all_cache()
+
 
     @staticmethod
     def _set_meaning_in_currency(code: str, fullname: str, sign: str) -> Currency:

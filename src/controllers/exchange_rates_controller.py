@@ -107,11 +107,46 @@ def post_exchange_rate(exchange_rates: ExchangeRatesRequest):
     return {"message": "Курс обмена успешно создан"}
 
 
+
 @exchange_rates_router.delete("/exchangeRates/{id}", status_code=204)
 def delete_exchange_rate(id: int):
     exchange_rates_service.delete_by_id(id)
     return None
 
+@exchange_rates_router.patch("/exchangeRates/{id}")  
+def update_exchange_rate(
+    id: int, 
+    exchange_rates_update: ExchangeRatesRequest
+):
+    base_currency = Currency(
+        id=exchange_rates_update.base_currency.id,
+        code=exchange_rates_update.base_currency.code,
+        fullname=exchange_rates_update.base_currency.fullname,
+        sign=exchange_rates_update.base_currency.sign
+    )
+    target_currency = Currency(
+        id=exchange_rates_update.target_currency.id,
+        code=exchange_rates_update.target_currency.code,
+        fullname=exchange_rates_update.target_currency.fullname,
+        sign=exchange_rates_update.target_currency.sign
+    )
+    
+    exchange_rates_obj = ExchangeRates(
+        id=id,  
+        base_currency=base_currency,
+        target_currency=target_currency,
+        rate=exchange_rates_update.rate
+    )
+    
+    exchange_rates_service.update_exchange_rate(exchange_rates_obj, id)
+    
+    return {
+        "message": f"Курс обмена с ID {id} успешно обновлен",
+        "id": id,
+        "rate": exchange_rates_update.rate,
+        "base_currency": exchange_rates_update.base_currency.code,
+        "target_currency": exchange_rates_update.target_currency.code
+    }
 
 @exchange_rates_router.get("/exchange", response_model=ExchangeDTOResponse)
 def exchange(

@@ -65,7 +65,6 @@ def post_currency(currency: CurrencyRequest):
 
 @currency_router.patch("/currencies/{id}", status_code=200)
 def update_currency(currency: CurrencyRequest, id: int):
-    print(f"Обнова в контроллере {currency} {id}")
     currency_obj = Currency(
         code=currency.code,
         fullname=currency.fullname,

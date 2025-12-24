@@ -8,7 +8,7 @@ from ..config.database import get_db_connection
 
 
 class ExchangeRatesRepository(CrudRepository[ExchangeRates, int]):
-
+    
     def __init__(self):
         self.data_source = get_db_connection
 
@@ -131,6 +131,29 @@ class ExchangeRatesRepository(CrudRepository[ExchangeRates, int]):
             if connection:
                 connection.rollback()
             raise RuntimeError(f"Ошибка при создании курса обмена: {e}")
+
+    def update(self, exchange_rate: ExchangeRates, id: int) -> None:
+        query = """
+            UPDATE exchangerates 
+            SET rate = %s, basecurrencyid = %s, targetcurrencyid = %s
+            WHERE id = %s
+        """
+        connection = None
+        try:
+            with self.data_source() as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, (
+                        exchange_rate.rate,
+                        exchange_rate.base_currency.id,
+                        exchange_rate.target_currency.id,
+                        id
+                    ))
+                    
+                    connection.commit()
+        except Exception as e:
+            if connection:
+                connection.rollback()
+            raise RuntimeError(f"Ошибка при обновлении курса обмена: {e}")
 
     def delete(self, id: int) -> None:
         query = "DELETE FROM exchangerates WHERE id=%s"

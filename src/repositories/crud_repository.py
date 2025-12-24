@@ -6,7 +6,6 @@ ID = TypeVar('ID')
 
 
 class CrudRepository(ABC, Generic[T, ID]):
-
     @abstractmethod
     def find_by_id(self, id: ID) -> Optional[T]:
         pass

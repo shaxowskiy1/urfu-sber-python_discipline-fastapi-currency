@@ -57,6 +57,17 @@ class ExchangeRatesServiceImpl(ExchangeRatesService):
                 self._delete_from_cache(self._get_cache_key_by_name(name_key))
         self._clear_all_cache()
 
+    def update_exchange_rate(self, exchange_rates: ExchangeRates, id: int) -> None:
+        old_exchange = self.exchange_rates_repository.find_by_id(id)
+        exchange_to_be_updated = self.exchange_rates_repository.find_by_id(id)
+        exchange_to_be_updated.rate = exchange_rates.rate
+        exchange_to_be_updated.base_currency = exchange_rates.base_currency
+        exchange_to_be_updated.target_currency = exchange_rates.target_currency
+        self.exchange_rates_repository.update(exchange_to_be_updated, id)
+        self._clear_all_cache()
+
+
+
     def create_exchange_rate(self, exchange_rates: ExchangeRates) -> None:
         new_exchange_rates = ExchangeRates(
             base_currency=exchange_rates.base_currency,
@@ -180,4 +191,5 @@ class ExchangeRatesServiceImpl(ExchangeRatesService):
 
     def _clear_all_cache(self) -> None:
         self._delete_from_cache(self._get_cache_key_all())
+    
 
